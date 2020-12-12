@@ -1,10 +1,11 @@
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DataAccess {
 
-    private Connection connection;
     private final String url = "jdbc:mysql://localhost:3306/cr7_peter";
+    private final Connection connection;
 
     public DataAccess() throws SQLException, ClassNotFoundException {
         java.lang.Class.forName("com.mysql.cj.jdbc.Driver");
@@ -15,7 +16,7 @@ public class DataAccess {
 
     public ArrayList<Student> getAllStudents() {
         String sql = "SELECT * FROM students";
-        ArrayList <Student> studentList = new ArrayList<>();
+        ArrayList<Student> studentList = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet rs = preparedStatement.executeQuery();
@@ -29,16 +30,15 @@ public class DataAccess {
             }
             rs.close();
             preparedStatement.close();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return studentList;
     }
 
-    public ArrayList<Teacher> getAllTeachers(){
+    public ArrayList<Teacher> getAllTeachers() {
         String sql = "SELECT * FROM teachers";
-        ArrayList <Teacher> teacherList = new ArrayList<>();
+        ArrayList<Teacher> teacherList = new ArrayList<>();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -53,15 +53,15 @@ public class DataAccess {
             }
             rs.close();
             preparedStatement.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return teacherList;
     }
 
-    public ArrayList<Class> getAllClasses(){
+    public ArrayList<Class> getAllClasses() {
         String sql = "SELECT * FROM classes";
-        ArrayList <Class> classList = new ArrayList<>();
+        ArrayList<Class> classList = new ArrayList<>();
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -74,20 +74,20 @@ public class DataAccess {
             }
             rs.close();
             preparedStatement.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return classList;
     }
 
-    public HashMap<ArrayList<Class>, Teacher> getClassesOfTeacher(int teacherId){
+    public HashMap<ArrayList<Class>, Teacher> getClassesOfTeacher(int teacherId) {
 
         String sql_classes = "SELECT classes.id, classes.name FROM teachersclassesrelation " +
                 "JOIN classes ON classes.id = teachersclassesrelation.fk_class_id " +
                 "WHERE teachersclassesrelation.fk_teacher_id = ?";
         String sql_name = "SELECT * FROM teachers WHERE teachers.id= ?";
-        ArrayList <Class> classList = new ArrayList<>();
-        HashMap <ArrayList<Class>, Teacher> classTeacher = new HashMap<>();
+        ArrayList<Class> classList = new ArrayList<>();
+        HashMap<ArrayList<Class>, Teacher> classTeacher = new HashMap<>();
 
         try {
             PreparedStatement pst1 = connection.prepareStatement(sql_classes);
@@ -114,14 +114,14 @@ public class DataAccess {
             rs2.close();
             pst1.close();
             pst2.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return classTeacher;
     }
 
-    public void displayAllStudents(){
-        ArrayList <Student> studentList = getAllStudents();
+    public void displayAllStudents() {
+        ArrayList<Student> studentList = getAllStudents();
         System.out.println("All Students:");
         for (Student student : studentList) {
             System.out.println(student.getSurname() + ", " + student.getName() + ", " + student.getEmail());
@@ -129,38 +129,39 @@ public class DataAccess {
         }
     }
 
-    public void displayAllTeachers(){
-        ArrayList <Teacher> teacherList = getAllTeachers();
+    public void displayAllTeachers() {
+        ArrayList<Teacher> teacherList = getAllTeachers();
         System.out.println("All Teachers:");
-        for (Teacher teacher: teacherList){
+        for (Teacher teacher : teacherList) {
             System.out.println(teacher.getSurname() + ", " + teacher.getName() + ", " + teacher.getEmail());
             System.out.println("TEACHER ID: " + teacher.getId() + "\n");
         }
     }
-    public void displayAllClasses(){
-        ArrayList <Class> classList = getAllClasses();
+
+    public void displayAllClasses() {
+        ArrayList<Class> classList = getAllClasses();
         System.out.println("All Classes:");
-        for (Class classA : classList){
+        for (Class classA : classList) {
             System.out.println(classA.getName());
             System.out.println("CLASS ID: " + classA.getId() + "\n");
         }
     }
 
-    public void displayAllTeachersWithId(){
-        ArrayList <Teacher> teacherList = getAllTeachers();
-        for (Teacher teacher : teacherList){
+    public void displayAllTeachersWithId() {
+        ArrayList<Teacher> teacherList = getAllTeachers();
+        for (Teacher teacher : teacherList) {
             System.out.println("ID " + teacher.getId() + ": " + teacher.getFullName());
         }
     }
 
-    public void displayClassesOfTeacher(int teacherId){
+    public void displayClassesOfTeacher(int teacherId) {
         HashMap<ArrayList<Class>, Teacher> classTeacher = getClassesOfTeacher(teacherId);
-        for (Teacher teacher: classTeacher.values()){
+        for (Teacher teacher : classTeacher.values()) {
             System.out.println(teacher.getFullName() + " teaches: ");
         }
 
-        for (ArrayList <Class> classes: classTeacher.keySet()){
-            for (Class classA: classes){
+        for (ArrayList<Class> classes : classTeacher.keySet()) {
+            for (Class classA : classes) {
                 System.out.println(classA);
             }
         }
